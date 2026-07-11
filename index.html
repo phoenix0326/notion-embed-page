@@ -13,12 +13,14 @@
   <script>
     (async () => {
       const count = 8;
-      const urls = Array.from({ length: count }, (_, i) => `parts/part${i}.txt`);
+      const version = 'f7daf314e7775bdd746e9cb8554978a420cda510';
+      const urls = Array.from({ length: count }, (_, i) => `parts/part${i}.txt?v=${version}`);
       const parts = await Promise.all(urls.map(async (url) => {
         const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) throw new Error(`${url}: ${res.status}`);
         return (await res.text()).trim();
       }));
+      parts[5] = parts[5].replace('jg5Djg4Pjg4DjgqP', 'jg5Djg4Pjg4bjgqP');
       const binary = atob(parts.join(''));
       const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
       const html = new TextDecoder('utf-8').decode(bytes);

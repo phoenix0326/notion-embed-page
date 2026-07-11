@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loading...</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; display: grid; place-items: center; min-height: 100vh; color: #111827; background: #f8fafc; }
+  </style>
+</head>
+<body>
+  <p>読み込み中...</p>
+  <script>
+    (async () => {
+      const count = 8;
+      const urls = Array.from({ length: count }, (_, i) => `parts/part${i}.txt`);
+      const parts = await Promise.all(urls.map(async (url) => {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`${url}: ${res.status}`);
+        return (await res.text()).trim();
+      }));
+      const binary = atob(parts.join(''));
+      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+      const html = new TextDecoder('utf-8').decode(bytes);
+      document.open();
+      document.write(html);
+      document.close();
+    })().catch((error) => {
+      document.body.innerHTML = `<pre style="white-space:pre-wrap;padding:24px;color:#b91c1c;">読み込みに失敗しました\n${error.message}</pre>`;
+    });
+  </script>
+</body>
+</html>
